@@ -21,6 +21,9 @@ class LogStash::Outputs::Circonus < LogStash::Outputs::Base
   # Example:
   #  `app_name => "%{myappname}"`
   config :app_name, :validate => :string, :required => true
+  
+  # Add in the ability to specify a URL for on premise Circonus 
+  config :URL, :validate => :string, :required => false
 
   # Annotations
   # Registers an annotation with Circonus
@@ -39,7 +42,7 @@ class LogStash::Outputs::Circonus < LogStash::Outputs::Base
   def register
     require "net/https"
     require "uri"
-    @url = "https://circonus.com/api/json/"
+    @url = :URL || "https://circonus.com/api/json/"
     @uri = URI.parse(@url)
     @client = Net::HTTP.new(@uri.host, @uri.port)
     @client.use_ssl = true
